@@ -1,0 +1,19 @@
+{
+  "name": "youtube-watchtime-count-extension",
+  "version": "1.0.0",
+  "description": "Tracks total video duration across all open YouTube tabs",
+  "type": "module",
+  "scripts": {
+    "dev": "wxt",
+    "dev:firefox": "wxt --browser firefox",
+    "build": "wxt build",
+    "build:firefox": "wxt build --browser firefox",
+    "zip": "wxt zip",
+    "zip:firefox": "wxt zip --browser firefox",
+    "postinstall": "wxt prepare"
+  },
+  "dependencies": {
+    "@webext-core/messaging": "^2.3.0",
+    "wxt": "^0.20.14"
+  }
+}

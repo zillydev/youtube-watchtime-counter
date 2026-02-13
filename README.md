@@ -6,7 +6,7 @@ A Chrome extension that tracks the remaining watch time across all your open You
 ![Manifest V3](https://img.shields.io/badge/Manifest-V3-blue)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-blue?logo=typescript&logoColor=white)
 
-<img width="321" height="228" alt="image" src="https://github.com/user-attachments/assets/cca6a14b-6ff2-4384-b3fa-e4738fdfd336" />
+<img width="320" height="234" alt="image" src="https://github.com/user-attachments/assets/996aa08d-1143-4e4c-b73d-06be3ed340c9" />
 
 
 ## Features

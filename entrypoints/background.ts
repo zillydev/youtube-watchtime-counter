@@ -18,7 +18,7 @@ export default defineBackground(() => {
     let totalRemaining = 0;
     for (const info of tabDurations.values()) {
       if (!info.isLoading) {
-        const remaining = info.durationSeconds - info.currentTimeSeconds;
+        const remaining = (info.durationSeconds - info.currentTimeSeconds) / (info.playbackRate || 1);
         if (Number.isFinite(remaining) && remaining > 0) totalRemaining += remaining;
       }
     }
@@ -60,6 +60,7 @@ export default defineBackground(() => {
         title: response.title,
         durationSeconds: response.durationSeconds,
         currentTimeSeconds: response.currentTimeSeconds,
+        playbackRate: response.playbackRate,
         isLoading: response.isLoading,
         videoType: response.videoType,
       });
@@ -194,6 +195,7 @@ export default defineBackground(() => {
       title: message.data.title,
       durationSeconds: message.data.durationSeconds,
       currentTimeSeconds: message.data.currentTimeSeconds,
+      playbackRate: message.data.playbackRate,
       isLoading: message.data.isLoading,
       videoType: message.data.videoType,
     });

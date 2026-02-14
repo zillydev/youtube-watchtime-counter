@@ -5,6 +5,7 @@ export interface TabDurationInfo {
   title: string;
   durationSeconds: number;
   currentTimeSeconds: number;
+  playbackRate: number;
   isLoading: boolean;
   videoType: 'video' | 'short';
 }
@@ -21,6 +22,7 @@ export interface PopupData {
 export interface DurationResponse {
   durationSeconds: number;
   currentTimeSeconds: number;
+  playbackRate: number;
   isLoading: boolean;
   videoType: 'video' | 'short';
   url: string;

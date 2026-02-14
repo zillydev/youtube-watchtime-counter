@@ -23,9 +23,8 @@ function render(data: PopupData): void {
     .filter((tab) => tab.title !== "YouTube" && tab.title !== "")
     .sort(
       (a, b) =>
-        b.durationSeconds -
-        b.currentTimeSeconds -
-        (a.durationSeconds - a.currentTimeSeconds),
+        (b.durationSeconds - b.currentTimeSeconds) / (b.playbackRate || 1) -
+        (a.durationSeconds - a.currentTimeSeconds) / (a.playbackRate || 1),
     );
 
   for (const tab of sorted) {
@@ -49,7 +48,7 @@ function createTabRow(tab: TabDurationInfo): HTMLElement {
     duration.textContent = "Loading...";
     duration.classList.add("loading");
   } else {
-    const remaining = Math.max(0, tab.durationSeconds - tab.currentTimeSeconds);
+    const remaining = Math.max(0, (tab.durationSeconds - tab.currentTimeSeconds) / (tab.playbackRate || 1));
     duration.textContent = formatTimestamp(remaining) + " left";
   }
 

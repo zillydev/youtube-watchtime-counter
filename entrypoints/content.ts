@@ -119,12 +119,14 @@ export default defineContentScript({
       }
       const isShort = url.includes("/shorts/");
       const currentTime = video?.currentTime ?? 0;
+      const playbackRate = video?.playbackRate ?? 1;
 
       // Try the <video> element first (most accurate when loaded)
       if (video && Number.isFinite(video.duration) && video.duration > 0) {
         return {
           durationSeconds: video.duration,
           currentTimeSeconds: currentTime,
+          playbackRate,
           isLoading: false,
           videoType: isShort ? "short" : "video",
           url,
@@ -138,6 +140,7 @@ export default defineContentScript({
         return {
           durationSeconds: pageDataDuration,
           currentTimeSeconds: currentTime,
+          playbackRate,
           isLoading: false,
           videoType: isShort ? "short" : "video",
           url,
@@ -148,6 +151,7 @@ export default defineContentScript({
       return {
         durationSeconds: 0,
         currentTimeSeconds: 0,
+        playbackRate: 1,
         isLoading: true,
         videoType: isShort ? "short" : "video",
         url,

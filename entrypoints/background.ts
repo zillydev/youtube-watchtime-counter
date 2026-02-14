@@ -17,7 +17,7 @@ export default defineBackground(() => {
   function calculateTotalRemaining(): number {
     let totalRemaining = 0;
     for (const info of tabDurations.values()) {
-      if (!info.isLiveStream && !info.isLoading) {
+      if (!info.isLoading) {
         const remaining = info.durationSeconds - info.currentTimeSeconds;
         if (Number.isFinite(remaining) && remaining > 0) totalRemaining += remaining;
       }
@@ -60,7 +60,6 @@ export default defineBackground(() => {
         title: response.title,
         durationSeconds: response.durationSeconds,
         currentTimeSeconds: response.currentTimeSeconds,
-        isLiveStream: response.isLiveStream,
         isLoading: response.isLoading,
         videoType: response.videoType,
       });
@@ -182,13 +181,19 @@ export default defineBackground(() => {
     const tabId = message.sender.tab?.id;
     if (tabId === undefined) return;
 
+    // Only track video/shorts pages — ignore playlist, home, etc.
+    if (!isYouTubeVideoUrl(message.data.url)) {
+      tabDurations.delete(tabId);
+      updateBadge();
+      return;
+    }
+
     tabDurations.set(tabId, {
       tabId,
       url: message.data.url,
       title: message.data.title,
       durationSeconds: message.data.durationSeconds,
       currentTimeSeconds: message.data.currentTimeSeconds,
-      isLiveStream: message.data.isLiveStream,
       isLoading: message.data.isLoading,
       videoType: message.data.videoType,
     });

@@ -45,10 +45,7 @@ function createTabRow(tab: TabDurationInfo): HTMLElement {
   const duration = document.createElement("span");
   duration.className = "tab-duration";
 
-  if (tab.isLiveStream) {
-    duration.textContent = "LIVE";
-    duration.classList.add("live");
-  } else if (tab.isLoading) {
+  if (tab.isLoading) {
     duration.textContent = "Loading...";
     duration.classList.add("loading");
   } else {

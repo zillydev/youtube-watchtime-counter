@@ -18,7 +18,7 @@ A Chrome extension that tracks the remaining watch time across all your open You
 - **Background tab support** — extracts duration from YouTube's page data, no need to visit the tab first
 - **Popup breakdown** — click the icon to see per-tab remaining time (e.g. "8:30 left"), updates live while open
 - **Toggle badge** — show/hide the badge via the eye icon in the popup
-- **Live stream aware** — live streams are shown as "LIVE" and excluded from the total
+- **Video-only tracking** — only counts actual video and Shorts pages, ignores playlists, channels, and other YouTube pages
 
 ## Install
 

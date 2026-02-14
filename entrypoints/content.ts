@@ -10,6 +10,10 @@ export default defineContentScript({
     let domObserver: MutationObserver | null = null;
     let reportInterval: ReturnType<typeof setInterval> | null = null;
 
+    function isVideoPage(url: string = location.href): boolean {
+      return url.includes("/watch") || url.includes("/shorts/");
+    }
+
     function getMainVideo(): HTMLVideoElement | null {
       const isShort = location.href.includes("/shorts/");
 
@@ -93,25 +97,6 @@ export default defineContentScript({
       return null;
     }
 
-    function isLiveStream(): boolean {
-      try {
-        const watchFlexy = document.querySelector("ytd-watch-flexy") as any;
-        if (watchFlexy?.playerData?.videoDetails?.isLive) return true;
-      } catch {
-        /* ignore */
-      }
-      try {
-        if ((window as any).ytInitialPlayerResponse?.videoDetails?.isLive)
-          return true;
-      } catch {
-        /* ignore */
-      }
-      // Also check the video element — live streams have Infinity duration
-      const video = getMainVideo();
-      if (video && video.duration === Infinity) return true;
-      return false;
-    }
-
     function extractDuration(): DurationResponse {
       const video = getMainVideo();
       const url = location.href;
@@ -133,8 +118,6 @@ export default defineContentScript({
         if (videoTitle) title = videoTitle;
       }
       const isShort = url.includes("/shorts/");
-      const live = isLiveStream();
-
       const currentTime = video?.currentTime ?? 0;
 
       // Try the <video> element first (most accurate when loaded)
@@ -142,7 +125,6 @@ export default defineContentScript({
         return {
           durationSeconds: video.duration,
           currentTimeSeconds: currentTime,
-          isLiveStream: live,
           isLoading: false,
           videoType: isShort ? "short" : "video",
           url,
@@ -156,7 +138,6 @@ export default defineContentScript({
         return {
           durationSeconds: pageDataDuration,
           currentTimeSeconds: currentTime,
-          isLiveStream: live,
           isLoading: false,
           videoType: isShort ? "short" : "video",
           url,
@@ -167,7 +148,6 @@ export default defineContentScript({
       return {
         durationSeconds: 0,
         currentTimeSeconds: 0,
-        isLiveStream: live,
         isLoading: true,
         videoType: isShort ? "short" : "video",
         url,
@@ -184,6 +164,11 @@ export default defineContentScript({
         // Detect URL changes from Shorts swiping (no navigation event fired)
         if (location.href !== currentUrl) {
           currentUrl = location.href;
+          // Stop reporting if we navigated away from a video page
+          if (!isVideoPage()) {
+            stopPeriodicReporting();
+            return;
+          }
         }
         const data = extractDuration();
         if (!data.isLoading) {
@@ -279,7 +264,9 @@ export default defineContentScript({
       if (newUrl !== currentUrl) {
         currentUrl = newUrl;
         stopPeriodicReporting();
-        setTimeout(waitForVideoAndReport, 500);
+        if (isVideoPage(newUrl)) {
+          setTimeout(waitForVideoAndReport, 500);
+        }
       }
     });
 
@@ -288,11 +275,15 @@ export default defineContentScript({
       if (newUrl !== currentUrl) {
         currentUrl = newUrl;
         stopPeriodicReporting();
-        setTimeout(waitForVideoAndReport, 500);
+        if (isVideoPage(newUrl)) {
+          setTimeout(waitForVideoAndReport, 500);
+        }
       }
     });
 
-    // Initial extraction
-    waitForVideoAndReport();
+    // Initial extraction — only on video/shorts pages
+    if (isVideoPage()) {
+      waitForVideoAndReport();
+    }
   },
 });
